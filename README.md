@@ -11,6 +11,33 @@ Goal: To be able to play games in your Windows VM and - while the VM is powered 
   - 3d acceleration, cuda/optix and opencl work
 - dGPU can be assigned to the VM once all apps that use it have been stopped
 
+## TOC
+
+- [Requirements & limitations](#requirements--limitations)
+  - [Two GPUs](#two-gpus)
+  - [All monitors connected to your iGPU](#all-monitors-connected-to-your-igpu)
+  - [Working VFIO gaming setup](#working-vfio-gaming-setup)
+  - [NVIDIA dGPU and non-NVIDIA iGPU](#nvidia-dgpu-and-non-nvidia-igpu)
+  - [Xorg or Wayland](#xorg-or-wayland)
+  - [Systemd](#systemd)
+  - [Reduced Linux gaming performance](#reduced-linux-gaming-performance)
+- [Steps](#steps)
+  - [Remove dGPU isolation](#steps)
+  - [Install & configure NVIDIA drivers](#install--configure-nvidia-drivers)
+    - [Enable modesetting](#enable-modesetting)
+    - [Reboot](#reboot)
+  - [Restrict applications from using the dGPU](#reboot)
+    - [Wayland](#wayland)
+    - [Xorg](#xorg)
+    - [Regular applications](#regular-applications)
+    - [Reboot](#reboot)
+  - [Install switcheroo-control](#install-switcheroo-control)
+  - [Setup wrapper script](#setup-wrapper-script)
+    - [Workaround for unpatched switcheroo-control](#workaround-for-unpatched-switcheroo-control)
+  - [Configure libvirt hooks](#configure-libvirt-hooks)
+  - [Verification](#verification)
+- [Final words](#final-words)
+
 # Requirements & limitations
 
 ## Two GPUs
@@ -172,6 +199,8 @@ TAG=="seat", ENV{ID_FOR_SEAT}=="i2c-dev-pci-0000_01_00_0", ENV{ID_SEAT}="seat1"
 ```
 
 Note: This will only prevent powerdevil from managing the monitor. You can still control it with non-multi-seat-enabled tools such as [ddcutil](https://www.ddcutil.com/). Again you may need to update _ID_FOR_SEAT_. Refer to the previous step for details.
+
+### Reboot
 
 Reboot your system.
 
@@ -379,3 +408,20 @@ And finally, start your VM:
 ```
 virsh start ${VM_NAME}
 ```
+
+# Final words
+
+This guide is not perfect.
+
+Some applications may be using the dGPU without you knowing about it. For instance if you run [mpv](https://mpv.io/) with `--hwdec=auto-safe` it will use the dGPU for decoding which exactly what you want. You may just not be aware of it.
+
+The libvirt hook was written to handle this. If you try to start the VM with the dGPU still beeing in-use it will fail gracefully and tell you which application is using it.
+
+After using your system for a while you may come across some applications that use the dGPU. You then have to choose if you want to try to prevent them from using the dGPU at all or you just accept the fact that you can't start your VM if that application is running.
+
+As for how to figure out how to prevent an application from using the dGPU I have no good answer. It really depends on the application and in extreme cases it can only be done by patching the source code of that application or using some LD_PRELOAD hack.
+
+
+This guide only describes an intermediate solution.
+
+While this is a huge step up from not using your dGPU in Linux at all, using it as an offloading renderer has it's drawbacks (as menioned in [Requirements & limitations](#requirements--limitations)). But for now this is as good as it gets. Maybe in a few years we'll have decent gpu hot-unplugging support or maybe the GPU vendors finally decide to grant their consumer GPUs at least rudimentary virtualization support (Intel seems to be heading in vagily that direction).

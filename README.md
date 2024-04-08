@@ -319,9 +319,19 @@ Create _/etc/libvirt/hooks/qemu.d/functions.sh_:
 load_nvidia_modules() {
         modprobe nvidia_uvm
         modprobe nvidia_drm
+
+        for service in persistenced powerd; do
+            if systemctl is-enabled "nvidia-${service}.service" > /dev/null; then
+                systemctl start "nvidia-${service}.service"
+            fi
+        done
 }
 
 unload_nvidia_modules() {
+        for service in persistenced powerd; do
+            systemctl stop "nvidia-${service}.service"
+        do
+
         # check if the card is in use
         # note: your dGPU might have a different card and renderer index
         for dev in /dev/dri/card1 /dev/dri/renderD129 /dev/nvidia0 /dev/nvidiactl /dev/nvidia-modeset /dev/nvidia-uvm /dev/nvidia-uvm-tools; do

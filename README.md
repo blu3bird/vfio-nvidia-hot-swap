@@ -83,7 +83,7 @@ In theory everything described in this guide should be possible with other servi
 
 ## Reduced Linux gaming performance
 
-When playing in Linux frames will be rendered on the dGPU and then transfered to the iGPU for displaying (known as offloading). This produces overhead and decreases performance but there is no way around it as the dGPU has to be used as a secondary card. There simply is no support for hot-unplugging a primary GPU yet.
+When playing in Linux frames will be rendered on the dGPU and then transfered to the iGPU for displaying (known as offloading or PRIME). This produces overhead and decreases performance but there is no way around it as the dGPU has to be used as a secondary card. We can't use the dGPU as primary GPU because then we won't be unable to swap it betwen VM and host...there simply is no support for hot-unplugging a primary GPU yet.
 
 You should expect a performance reduction of up to 20%* compared to using your dGPU as a primary GPU without offloading.
 

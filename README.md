@@ -118,6 +118,14 @@ For Wayland support you must enable modesetting. This can be done by setting `nv
 options nvidia-drm modeset=1
 ```
 
+### Enable persistenced/powerd (optional)
+
+If you want to use [persistenced](https://download.nvidia.com/XFree86/Linux-x86_64/550.67/README/nvidia-persistenced.html) and/or [powerd](https://download.nvidia.com/XFree86/Linux-x86_64/550.67/README/dynamicboost.html) enable them:
+```
+systemctl enable nvidia-persistenced.service
+systemctl enable nvidia-powerd.service
+```
+
 ### Reboot
 
 Reboot your system and use `nvidia-smi` afterwards to verify your dGPU is usable in Linux.
@@ -317,9 +325,11 @@ Create _/etc/libvirt/hooks/qemu.d/functions.sh_:
 #!/bin/false
 
 load_nvidia_modules() {
+        # load modules
         modprobe nvidia_uvm
         modprobe nvidia_drm
 
+        # start services
         for service in persistenced powerd; do
             if systemctl is-enabled "nvidia-${service}.service" > /dev/null; then
                 systemctl start "nvidia-${service}.service"
@@ -328,7 +338,8 @@ load_nvidia_modules() {
 }
 
 unload_nvidia_modules() {
-        for service in persistenced powerd; do
+        # stop services
+        for service in powerd persistenced; do
             systemctl stop "nvidia-${service}.service"
         do
 
@@ -343,7 +354,7 @@ unload_nvidia_modules() {
                 fi
         done
 
-        # unload all nvidia modules in the correct order
+        # unload all modules in the correct order
         for module in nvidia_drm nvidia_modeset nvidia_uvm nvidia; do
                 if [ -d "/sys/module/${module}" ]; then
                         rmmod "${module}"
@@ -373,6 +384,12 @@ Hint: Even with the hook you still want `<hostdev managed='yes'>` in your xml to
 ## Verification
 
 Reboot your system and start your graphical environment (if you haven't already).
+
+Temporarily stop nvidia-persistenced and nvidia-powerd if you have them enabled:
+```
+systemctl stop nvidia-powerd.service
+systemctl stop nvidia-persistenced}.service
+```
 
 Verify the NVIDIA modules are loaded:
 ```

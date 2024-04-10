@@ -206,7 +206,7 @@ Update _/etc/udev/rules.d/99-hidden-seat.rules_ you created earlier and append:
 TAG=="seat", ENV{ID_FOR_SEAT}=="i2c-dev-pci-0000_01_00_0", ENV{ID_SEAT}="seat1"
 ```
 
-Note: This will only prevent powerdevil from managing the monitor. You can still control it with non-multi-seat-enabled tools such as [ddcutil](https://www.ddcutil.com/). Again you may need to update _ID_FOR_SEAT_. Refer to the previous step for details.
+Note: This will not only prevent powerdevil from managing the monitor but restrict access for everyone except the root account. You can still control it with tools such as [ddcutil](https://www.ddcutil.com/) run as root/sudo. Again you may need to update _ID_FOR_SEAT_. Refer to the previous step for details.
 
 ### Reboot
 

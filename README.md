@@ -134,7 +134,7 @@ Hint: If you are running a graphical session Linux may use your dGPU as output. 
 
 ## Restrict applications from using the dGPU
 
-We want to restrict all applications from using the dGPU without beeing explicitly told to. Because to be able to assign the dGPU to the VM it must not be in-use. And we don't want to stop/kill a bunch of applications everytime we start the VM.
+We want to restrict all applications from using the dGPU without beeing explicitly told to use it. Because to be able to assign the dGPU to the VM it must not be in-use. And we don't want to stop/kill a bunch of applications everytime we start the VM.
 
 ### Wayland
 

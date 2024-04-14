@@ -2,7 +2,7 @@
 
 This guide describes how to set up GPU hot-swapping in a VFIO gaming setup.
 
-Goal: To be able to play games in your Windows VM and - while the VM is powered down - be able to play games in your Linux host. Seamlessly. Without rebooting your PC or restarting the GUI.
+Goal: To be able to play games in your Windows VM and - while the VM is powered down - be able to play games in your Linux host utilizing that jucy dGPU of yours. Seamlessly. Without rebooting your PC or restarting the GUI.
 
 ## Bullet points
 - Linux will primarly use the iGPU
@@ -63,7 +63,9 @@ Also, what we are doing could be described as an advanced setup. You should be f
 
 I know from personal experience that this also works with an Intel dGPU and I have heard reports of it working with an AMD dGPU as well. But this guide is specifically tailored for a NVIDIA dGPU.
 
-However if your iGPU (integraded or PCIe) is also a NVIDIA card you are out of luck. Because the [sysfs unbind mechanism](https://lwn.net/Articles/143397/) is unrelible for NVIDIA cards the only way to "unbind" the card is by unloading the NVIDIA modules altogether. And that will not be possible if there is a 2nd NVIDIA card that is still in-use.
+However if your iGPU (integraded or PCIe) is also a NVIDIA card you are out of luck. Because the [sysfs unbind mechanism](https://lwn.net/Articles/143397/) is unrelible for NVIDIA cards the only way to reliably "unbind" the card is by unloading the NVIDIA modules altogether. And that will not be possible if there is a 2nd NVIDIA card that is still in-use.
+
+The only way to get this to work would be to run your iGPU using the [nouveau](https://nouveau.freedesktop.org) driver which doesn't support any cards made in the last 7 years...
 
 ## Xorg or Wayland
 
